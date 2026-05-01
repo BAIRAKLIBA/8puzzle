@@ -42,7 +42,7 @@ class Program
             Console.WriteLine($"Solvable: {PuzzleGenerator.IsSolvable(board)}\n");
             
             
-            Console.Write("1. BFS\n2. A*\n3. exit\nChoice: ");
+            Console.Write("1. BFS\n2. A*\n3. Exit\nChoice: ");
             int choice = Convert.ToInt16(Console.ReadLine());
             Solver? solver = Choice(choice);
             
@@ -82,6 +82,20 @@ class Program
                 Console.WriteLine("No solution\n");
 
             
+            string? input;
+
+            do
+            {
+                Console.Write("Continue? (y/n): ");
+                input = Console.ReadLine()?.Trim().ToLower();
+            }
+            while(input != "y" && input != "yes" && input != "n" && input != "no");
+
+            if(input == "n" || input == "no")
+            {
+                Console.WriteLine("Exiting the program...\n");
+                break;
+            }
 
         }
     }
