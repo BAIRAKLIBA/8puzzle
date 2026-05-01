@@ -1,14 +1,13 @@
-﻿
-
-namespace puzzle_8game;
+﻿namespace puzzle_8game;
 class Program
 {
 
     static void PrintBoard(int[,] board, int step = 1)
     {
-        //Console.WriteLine($"=======Step #{step} =====");
+        
         for(int i = 0; i < board.GetLength(0); i++)
         {
+            //Console.WriteLine($"=======Step #{step++} =====");
             for(int j = 0; j < board.GetLength(1); j++)
                 Console.Write($"{board[i, j]} ");
             Console.WriteLine();
@@ -43,11 +42,16 @@ class Program
             Console.WriteLine($"Solvable: {PuzzleGenerator.IsSolvable(board)}\n");
             
             
-            Console.WriteLine("1. BFS\n2. A*\nChoice: ");
+            Console.Write("1. BFS\n2. A*\n3. exit\nChoice: ");
             int choice = Convert.ToInt16(Console.ReadLine());
             Solver? solver = Choice(choice);
             
-            
+            if(solver == null)
+            {
+                Console.WriteLine("Exiting the program...\n");
+                break;
+            }
+                
 
 
             Node? start = solver?.CreateStart(board);
