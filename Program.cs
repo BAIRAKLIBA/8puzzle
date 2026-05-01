@@ -1,13 +1,11 @@
 ﻿namespace puzzle_8game;
 class Program
 {
-
+    // ბეჭდავს დაფას კონსოლში
     static void PrintBoard(int[,] board, int step = 1)
     {
-        
         for(int i = 0; i < board.GetLength(0); i++)
         {
-            //Console.WriteLine($"=======Step #{step++} =====");
             for(int j = 0; j < board.GetLength(1); j++)
                 Console.Write($"{board[i, j]} ");
             Console.WriteLine();
@@ -15,6 +13,7 @@ class Program
         Console.WriteLine();
     }
 
+    // მომხმარებლის არჩევანის მიხედვით აბრუნებს შესაბამის solver-ს
     public static Solver? Choice(int choice)
     {
         if(choice == 1)
@@ -26,24 +25,27 @@ class Program
             Console.WriteLine("=== A* ===\n");
             return new AStar();
         }
-        return null;
+        return null; // 3 ან სხვა მნიშვნელობა → exit
     }
 
-    
     static void Main()
     {
         Console.WriteLine("8 puzzle game.\n");
+
+        // მთავარი ციკლი — პროგრამა მუშაობს სანამ მომხმარებელი არ გამოვა
         while (true)
         {
+            // გენერირდება შემთხვევითი დაფა, რომელიც იქნება ამოხსნადი
             int[,] board = PuzzleGenerator.GenerateRandomBoard(40);
 
             PrintBoard(board);
 
+            // დამატებითი შემოწმება 
             Console.WriteLine($"Solvable: {PuzzleGenerator.IsSolvable(board)}\n");
-            
             
             Console.Write("1. BFS\n2. A*\n3. Exit\nChoice: ");
             int choice = Convert.ToInt16(Console.ReadLine());
+
             Solver? solver = Choice(choice);
             
             if(solver == null)
@@ -51,10 +53,9 @@ class Program
                 Console.WriteLine("Exiting the program...\n");
                 break;
             }
-                
 
-
-            Node? start = solver?.CreateStart(board);
+            // საწყისი მდგომარეობის შექმნა (იპოვის 0-ის პოზიციას)
+            Node? start = solver.CreateStart(board);
 
             if(start == null)
             {
@@ -62,14 +63,15 @@ class Program
                 return;
             }
 
+            // დროის გაზომვა
             var sw = System.Diagnostics.Stopwatch.StartNew();
 
-            var solution = solver?.Solve(start);
+            // ძირითადი ნაწილი
+            var solution = solver.Solve(start);
 
             sw.Stop();
 
-            
-            
+            // თუ ამოხსნა მოიძებნა ბეჭდავს ნაბიჯებს
             if(solution != null)
             {
                 foreach(Node step in solution)
@@ -81,7 +83,7 @@ class Program
             else 
                 Console.WriteLine("No solution\n");
 
-            
+            // გაგრძელების კითხვა
             string? input;
 
             do
@@ -96,7 +98,6 @@ class Program
                 Console.WriteLine("Exiting the program...\n");
                 break;
             }
-
         }
     }
 }

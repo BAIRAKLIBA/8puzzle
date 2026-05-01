@@ -7,28 +7,16 @@ namespace puzzle_8game
 {
     public class AStar : Solver
     {
-        // private readonly int[,] goal =
-        // {
-        //     {1, 2, 3},
-        //     {4, 5, 6},
-        //     {7, 8, 0}
-        // };
-
-        // private readonly int[,] directions =
-        // {
-        //     {-1, 0},
-        //     {1, 0},
-        //     {0, -1},
-        //     {0, 1}
-        // };
-
         public override List<Node>? Solve(Node start)
         {
+            // პრიორიტეტული რიგი (F = G + H-ის მიხედვით)
             var open = new PriorityQueue<Node, int>();
+
+            // უკვე დამუშავებული მდგომარეობები
             var visited  = new HashSet<string>();
 
-            start.G = 0;
-            start.H = Manhattan(start.Board);
+            start.G = 0; // გავლილი გზა
+            start.H = Manhattan(start.Board); // ევრისტიკა
 
             open.Enqueue(start, start.F);
 
@@ -41,22 +29,24 @@ namespace puzzle_8game
                 
                 visited.Add(key);
 
+                // თუ მიზანს მივაღწიეთ
                 if(IsGoal(current.Board))
                     return ReconstructPath(current);
                 
+                // ვამატებთ მეზობლებს
                 foreach(var neighbor in GetNeighbors(current))
                 {
-                    neighbor.G = current.G + 1;
-                    neighbor.H = Manhattan(neighbor.Board);
+                    neighbor.G = current.G + 1;           // ერთი ნაბიჯით მეტი
+                    neighbor.H = Manhattan(neighbor.Board); // შეფასება
 
                     open.Enqueue(neighbor, neighbor.F);
                 }
-                
             }
 
             return null;
         }
 
+        // Manhattan distance ევრისტიკა
         private int Manhattan(int[,] board)
         {
             int distance = 0;
@@ -71,14 +61,15 @@ namespace puzzle_8game
                     int targetRow = (val - 1) / 3;
                     int targetCol = (val - 1) % 3;
 
-                    distance = Math.Abs(i - targetRow) + Math.Abs(j - targetCol);
+                    
+                    distance += Math.Abs(i - targetRow) + Math.Abs(j - targetCol);
                 }
             }
 
             return distance;
         }
 
-
+        // შესაძლო მოძრაობების გენერაცია
         protected override List<Node> GetNeighbors(Node current)
         {
             var neighbors = new List<Node>();
@@ -101,17 +92,19 @@ namespace puzzle_8game
             return neighbors;
         }
 
+        // swap
         protected override void Swap(int[,] board, int r1, int c1, int r2, int c2)
         {
             (board[r1, c1], board[r2, c2]) = (board[r2, c2], board[r1, c1]);
         }
 
-
+        // საზღვრების შემოწმება
         protected override bool IsValid(int r, int c)
         {
             return r >= 0 && r < 3 && c >= 0 && c < 3;
         }
 
+        // უნიკალური key visited-სთვის
         protected override string ToKey(int[,] board)
         {
             string key = "";
@@ -119,9 +112,11 @@ namespace puzzle_8game
             for(int i = 0; i < 3; i++)
                 for(int j = 0; j < 3; j++)
                     key += board[i, j] + ", ";
+
             return key;
         }
 
+        // მიზნის შემოწმება
         protected override bool IsGoal(int[,] board)
         {
             for(int i = 0; i < 3; i++)
@@ -132,6 +127,7 @@ namespace puzzle_8game
             return true;
         }
 
+        // გზის აღდგენა
         protected override List<Node> ReconstructPath(Node? node)
         {
             var path = new List<Node>();
@@ -146,6 +142,7 @@ namespace puzzle_8game
             return path;
         }
         
+        // საწყისი Node-ის შექმნა
         public override Node? CreateStart(int[,] board)
         {
             for (int i = 0; i < 3; i++)
