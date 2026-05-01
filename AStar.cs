@@ -61,7 +61,7 @@ namespace puzzle_8game
                     int targetRow = (val - 1) / 3;
                     int targetCol = (val - 1) % 3;
 
-                    
+                    // d = |x1 - x2| + |y1 - y2|
                     distance += Math.Abs(i - targetRow) + Math.Abs(j - targetCol);
                 }
             }
